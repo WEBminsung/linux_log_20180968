@@ -1,6 +1,78 @@
 # linux_log_20180968
 리눅스 로그용
 
+# 취약점 스캔 결과와 해결방안
+
+![스크린샷 1](./스크린샷/취약성상위5개/1.png)
+
+1. Cross Site Scripting (DOM Based) (63건)
+취약점 개요:
+DOM 기반 XSS는 클라이언트 측 자바스크립트가 사용자 입력을 적절히 검증하지 않고 HTML에 삽입할 때 발생합니다.
+
+해결 방안:
+
+클라이언트 측에서 사용자 입력을 DOM에 삽입하기 전에 반드시 이스케이프 처리(Escape) 또는 인코딩 적용
+
+신뢰할 수 없는 데이터를 innerHTML 대신 textContent, setAttribute 등 안전한 API로 처리
+
+Content Security Policy (CSP)를 도입하여 인라인 스크립트 실행 제한
+
+가능한 경우 DOMPurify 같은 라이브러리를 사용해 입력값을 정제
+
+2. Cross Site Scripting (Reflected) (3건)
+취약점 개요:
+서버가 사용자 입력을 그대로 반영해 HTML 페이지에 삽입할 때 발생하는 XSS.
+
+해결 방안:
+
+서버 측에서 입력값에 대한 철저한 필터링 및 이스케이프 처리 적용
+
+HTML 출력 시 특수문자(<, >, ", ', &)를 반드시 인코딩
+
+사용자 입력을 URL 쿼리, HTML, 자바스크립트 등에 직접 삽입하지 않도록 주의
+
+CSP 설정 강화
+
+3. Absence of Anti-CSRF Tokens (3건)
+취약점 개요:
+사이트 간 요청 위조(CSRF)를 방지하기 위한 토큰이 없으면 공격자가 사용자의 권한으로 악의적 요청을 보낼 수 있음.
+
+해결 방안:
+
+모든 상태 변경 요청(POST, PUT, DELETE 등)에 CSRF 토큰 적용
+
+토큰은 서버가 생성하여 폼 및 AJAX 요청에 포함
+
+토큰 검증 실패 시 요청 차단
+
+SameSite 쿠키 속성 설정 권장
+
+4. Content Security Policy (CSP) Header Not Set (181건)
+취약점 개요:
+웹 애플리케이션에 CSP 헤더가 없으면 XSS, 데이터 인젝션 공격 등에 취약해짐.
+
+해결 방안:
+
+HTTP 응답 헤더에 Content-Security-Policy 추가
+
+기본적으로 신뢰할 수 있는 스크립트, 스타일, 이미지 소스만 허용하도록 설정
+
+default-src 'self' 와 같이 엄격한 정책 적용 권장
+
+점진적으로 정책 강화하며 테스트 진행
+
+5. Missing Anti-clickjacking Header (74건)
+취약점 개요:
+X-Frame-Options 또는 CSP의 frame-ancestors 헤더가 없으면, 다른 사이트가 해당 페이지를 iframe에 삽입해 클릭재킹 공격 가능.
+
+해결 방안:
+
+HTTP 응답 헤더에 X-Frame-Options: DENY 또는 SAMEORIGIN 추가
+
+또는 CSP의 frame-ancestors 'none' 또는 신뢰할 도메인만 허용 설정
+
+클릭재킹 방어를 위한 헤더 반드시 적용
+
 
 # 0523 아파치 웹서버 보안 실습 
 
